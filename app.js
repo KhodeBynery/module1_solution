@@ -1,31 +1,44 @@
 (function () {
+    'use strict';
 
   angular.module('LunchCheck', [])
-    .controller('LunchController', LunchController);
+      .controller('LunchController', LunchCheck);
 
-  LunchController.$inject = ['$scope'];
+  LunchCheck.$inject = ['$scope'];
+  function LunchCheck ($scope) {
+      $scope.normalLunch = '';
+      $scope.buttonResponse = '';
 
-  function LunchController($scope) {
-    $scope.message = "";
+      $scope.itemCount = function countArrayItems (items) {
+          var lunchItemCount = 0;
+          var lunchItemArray = [];
 
-    $scope.displayMessage = function() {
-      var items;
+          if (items.trim() !== '' && items !== null &&
+              items !== undefined && items != Infinity) {
+              lunchItemArray = items.split(',');
+              for (var item in lunchItemArray) {
+                  if (lunchItemArray[item].trim().length > 0) {
+                      lunchItemCount += 1;
+                  }
+              }
+          }
 
-      if ($scope.input) {
-        $scope.input = $scope.input.trim();
-        items = $scope.input.split(",");
-        items = items.filter(function(item) {
-          return item.length > 0;
-        });
-        if (items.length <= 3) {
-          $scope.message = "Enjoy!";
-        } else {
-          $scope.message = "Too much!";
-        }
-      } else {
-        $scope.message = "Please enter data first";
-      }
+          return lunchItemCount;
+      };
+
+      $scope.isTooMuch = function checkMealSize () {
+          var itemAmount =
+              $scope.itemCount($scope.normalLunch);
+          var finalMessage = 'Please enter data first';
+          if (itemAmount> 0 && itemAmount <= 3) {
+              finalMessage = 'Enjoy!';
+          }
+          else if (itemAmount > 3) {
+              finalMessage = 'Too much!';
+          }
+
+          $scope.buttonResponse = finalMessage;
+      };
+
     }
-  }
-
 })();
